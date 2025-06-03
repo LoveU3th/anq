@@ -160,7 +160,7 @@ export class Router {
     try {
       // 根据组件名称动态导入
       const componentPath = `../components/${componentName}.js`;
-      return await import(componentPath);
+      return await import(/* @vite-ignore */ componentPath);
     } catch (error) {
       this.logger.warn(`组件 ${componentName} 未找到，使用默认渲染`);
       return { default: { render: () => `<h1>页面: ${componentName}</h1>` } };
