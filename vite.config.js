@@ -23,7 +23,11 @@ export default defineConfig({
           vendor: ['web-vitals'],
           router: ['src/modules/router.js'],
           utils: ['src/utils/logger.js', 'src/utils/performance.js']
-        }
+        },
+        // 确保动态导入的组件能够正确解析
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]'
       }
     },
 

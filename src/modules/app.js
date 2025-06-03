@@ -8,6 +8,7 @@ import { PerformanceMonitor } from '../utils/performance.js';
 import { Logger } from '../utils/logger.js';
 import { dataManager } from './data-manager.js';
 import PWAManager from './pwa-manager.js';
+import { componentRegistry } from './componentRegistry.js';
 
 class App {
   constructor() {
@@ -26,6 +27,9 @@ class App {
 
       // 显示加载指示器
       this.showLoading();
+
+      // 初始化组件注册表
+      await this.initComponentRegistry();
 
       // 初始化数据管理器
       await this.initDataManager();
@@ -54,6 +58,19 @@ class App {
     } catch (error) {
       this.logger.error('应用初始化失败:', error);
       this.showError('应用初始化失败，请刷新页面重试');
+    }
+  }
+
+  /**
+   * 初始化组件注册表
+   */
+  async initComponentRegistry() {
+    try {
+      // 预加载所有组件
+      await componentRegistry.preloadComponents();
+      this.logger.info('组件注册表初始化完成');
+    } catch (error) {
+      this.logger.warn('组件注册表初始化失败:', error);
     }
   }
 

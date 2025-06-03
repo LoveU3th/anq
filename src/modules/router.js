@@ -4,6 +4,7 @@
  */
 
 import { Logger } from '../utils/logger.js';
+import { componentRegistry } from './componentRegistry.js';
 
 export class Router {
   constructor(routes = {}, options = {}) {
@@ -158,12 +159,52 @@ export class Router {
    */
   async importComponent(componentName) {
     try {
-      // 根据组件名称动态导入
-      const componentPath = `../components/${componentName}.js`;
-      return await import(/* @vite-ignore */ componentPath);
+      // 从组件注册表获取组件
+      const Component = componentRegistry.getComponent(componentName);
+
+      if (Component) {
+        this.logger.debug(`从注册表获取组件: ${componentName}`);
+        return { default: Component };
+      }
+
+      // 如果注册表中没有，抛出错误
+      throw new Error(`组件 ${componentName} 未在注册表中找到`);
+
     } catch (error) {
-      this.logger.warn(`组件 ${componentName} 未找到，使用默认渲染`);
-      return { default: { render: () => `<h1>页面: ${componentName}</h1>` } };
+      this.logger.warn(`组件 ${componentName} 加载失败:`, error);
+
+      // 返回降级组件
+      return {
+        default: {
+          render: () => `
+            <div class="component-error">
+              <h1>组件加载失败</h1>
+              <p>组件 "${componentName}" 无法加载，请刷新页面重试。</p>
+              <button onclick="location.reload()" class="btn btn-primary">刷新页面</button>
+              <a href="/" class="btn btn-secondary">返回首页</a>
+            </div>
+            <style>
+              .component-error {
+                text-align: center;
+                padding: 3rem 2rem;
+                max-width: 500px;
+                margin: 0 auto;
+              }
+              .component-error h1 {
+                color: #dc2626;
+                margin-bottom: 1rem;
+              }
+              .component-error p {
+                color: #6b7280;
+                margin-bottom: 2rem;
+              }
+              .component-error .btn {
+                margin: 0 0.5rem;
+              }
+            </style>
+          `
+        }
+      };
     }
   }
 
