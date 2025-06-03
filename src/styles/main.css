@@ -13,6 +13,7 @@
 @import './pages/home.css';
 @import './pages/video.css';
 @import './pages/quiz.css';
+@import './pages/admin.css';
 
 /* Global Styles */
 * {

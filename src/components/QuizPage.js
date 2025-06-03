@@ -128,14 +128,14 @@ export default class QuizPage {
                   <button class="btn btn-secondary" id="prev-btn" disabled>
                     上一题
                   </button>
-                  <div class="nav-right-buttons">
+                  <div class="nav-center-buttons">
                     <button class="btn btn-primary" id="submit-answer-btn" disabled>
                       提交答案
                     </button>
-                    <button class="btn btn-success" id="submit-quiz-btn" style="display: none;">
-                      提交答卷
-                    </button>
                   </div>
+                  <button class="btn btn-secondary" id="next-btn" disabled>
+                    下一题
+                  </button>
                 </div>
               </div>
 
@@ -273,7 +273,7 @@ export default class QuizPage {
     // 导航按钮
     const prevBtn = document.getElementById('prev-btn');
     const submitAnswerBtn = document.getElementById('submit-answer-btn');
-    const submitQuizBtn = document.getElementById('submit-quiz-btn');
+    const nextBtn = document.getElementById('next-btn');
 
     if (prevBtn) {
       prevBtn.addEventListener('click', () => this.previousQuestion());
@@ -281,8 +281,8 @@ export default class QuizPage {
     if (submitAnswerBtn) {
       submitAnswerBtn.addEventListener('click', () => this.submitCurrentAnswer());
     }
-    if (submitQuizBtn) {
-      submitQuizBtn.addEventListener('click', () => this.submitQuiz());
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => this.nextQuestion());
     }
 
     // 结果页面按钮
@@ -354,12 +354,6 @@ export default class QuizPage {
     // 渲染题目
     questionContainer.innerHTML = this.renderQuestion(question);
 
-    // 重置提交按钮状态
-    const submitAnswerBtn = document.getElementById('submit-answer-btn');
-    if (submitAnswerBtn) {
-      submitAnswerBtn.disabled = true;
-    }
-
     // 更新进度
     this.updateProgress();
 
@@ -368,6 +362,9 @@ export default class QuizPage {
 
     // 绑定选项点击事件
     this.bindOptionEvents();
+
+    // 恢复答案状态
+    this.restoreAnswerState();
   }
 
   /**
@@ -492,6 +489,65 @@ export default class QuizPage {
   }
 
   /**
+   * 恢复答案状态
+   */
+  restoreAnswerState() {
+    const isSubmitted = this.quizEngine.isCurrentQuestionSubmitted();
+
+    if (isSubmitted) {
+      // 如果题目已提交，恢复已提交的答案并禁用所有选项
+      const userAnswer = this.quizEngine.userAnswers[this.quizEngine.getCurrentQuestionIndex()];
+      if (userAnswer) {
+        this.restoreSubmittedAnswer(userAnswer.selectedAnswers);
+      }
+    } else {
+      // 如果题目未提交，恢复临时答案
+      const tempAnswer = this.quizEngine.getTempAnswer();
+      if (tempAnswer.length > 0) {
+        this.restoreTempAnswer(tempAnswer);
+      }
+    }
+  }
+
+  /**
+   * 恢复已提交的答案
+   */
+  restoreSubmittedAnswer(selectedAnswers) {
+    selectedAnswers.forEach(value => {
+      const input = document.querySelector(`.option-input[value="${value}"]`);
+      if (input) {
+        input.checked = true;
+        input.disabled = true;
+        input.parentElement.classList.add('selected', 'disabled');
+      }
+    });
+
+    // 禁用提交按钮
+    const submitAnswerBtn = document.getElementById('submit-answer-btn');
+    if (submitAnswerBtn) {
+      submitAnswerBtn.disabled = true;
+      submitAnswerBtn.textContent = '已提交';
+    }
+  }
+
+  /**
+   * 恢复临时答案
+   */
+  restoreTempAnswer(selectedAnswers) {
+    selectedAnswers.forEach(value => {
+      const input = document.querySelector(`.option-input[value="${value}"]`);
+      if (input) {
+        input.checked = true;
+        input.parentElement.classList.add('selected');
+      }
+    });
+
+    // 更新选项样式和按钮状态
+    this.updateOptionStyles();
+    this.checkCanSubmit();
+  }
+
+  /**
    * 检查是否可以提交答案
    */
   checkCanSubmit() {
@@ -499,14 +555,16 @@ export default class QuizPage {
     const hasAnswer = selectedInputs.length > 0;
 
     const submitAnswerBtn = document.getElementById('submit-answer-btn');
-    const submitQuizBtn = document.getElementById('submit-quiz-btn');
 
     if (hasAnswer) {
       if (submitAnswerBtn) submitAnswerBtn.disabled = false;
-      if (submitQuizBtn) submitQuizBtn.disabled = false;
+      // 保存临时答案
+      const selectedValues = Array.from(selectedInputs).map(input => parseInt(input.value));
+      this.quizEngine.saveTempAnswer(selectedValues);
     } else {
       if (submitAnswerBtn) submitAnswerBtn.disabled = true;
-      if (submitQuizBtn) submitQuizBtn.disabled = true;
+      // 清除临时答案
+      this.quizEngine.saveTempAnswer([]);
     }
   }
 
@@ -564,28 +622,29 @@ export default class QuizPage {
       submitAnswerBtn.textContent = '已提交';
     }
 
-    // 自动跳转到下一题或完成测试
-    setTimeout(() => {
-      this.goToNextQuestionOrFinish();
-    }, 800);
-  }
+    // 更新导航按钮状态
+    this.updateNavigationButtons();
 
-  /**
-   * 跳转到下一题或完成测试
-   */
-  goToNextQuestionOrFinish() {
+    // 自动跳转逻辑
     const currentIndex = this.quizEngine.getCurrentQuestionIndex();
     const totalQuestions = this.quizEngine.getTotalQuestions();
 
-    if (currentIndex < totalQuestions - 1) {
-      // 还有下一题，跳转到下一题
-      this.quizEngine.nextQuestion();
-      this.showCurrentQuestion();
+    if (currentIndex === totalQuestions - 1) {
+      // 如果是最后一题，显示完成提示并自动完成测试
+      this.showAutoActionMessage('正在完成测试...', 1200);
+      setTimeout(() => {
+        this.submitQuiz();
+      }, 1200);
     } else {
-      // 已经是最后一题，完成测试
-      this.submitQuiz();
+      // 如果不是最后一题，显示跳转提示并自动跳转到下一题
+      this.showAutoActionMessage('正在跳转到下一题...', 1200);
+      setTimeout(() => {
+        this.nextQuestion();
+      }, 1200);
     }
   }
+
+
 
 
 
@@ -622,27 +681,31 @@ export default class QuizPage {
     const currentIndex = this.quizEngine.getCurrentQuestionIndex();
     const totalQuestions = this.quizEngine.getTotalQuestions();
     const isLastQuestion = currentIndex === totalQuestions - 1;
+    const isSubmitted = this.quizEngine.isCurrentQuestionSubmitted();
 
     const prevBtn = document.getElementById('prev-btn');
     const submitAnswerBtn = document.getElementById('submit-answer-btn');
-    const submitQuizBtn = document.getElementById('submit-quiz-btn');
+    const nextBtn = document.getElementById('next-btn');
 
     // 上一题按钮
     if (prevBtn) {
       prevBtn.disabled = currentIndex === 0;
     }
 
-    // 重置提交答案按钮文本
-    if (submitAnswerBtn) {
-      submitAnswerBtn.textContent = '提交答案';
-      submitAnswerBtn.disabled = true;
+    // 下一题按钮
+    if (nextBtn) {
+      nextBtn.disabled = isLastQuestion;
     }
 
-    // 最后一题显示提交答卷按钮
-    if (isLastQuestion) {
-      if (submitQuizBtn) submitQuizBtn.style.display = 'inline-block';
-    } else {
-      if (submitQuizBtn) submitQuizBtn.style.display = 'none';
+    // 提交答案按钮状态
+    if (submitAnswerBtn) {
+      if (isSubmitted) {
+        submitAnswerBtn.textContent = '已提交';
+        submitAnswerBtn.disabled = true;
+      } else {
+        submitAnswerBtn.textContent = '提交答案';
+        submitAnswerBtn.disabled = true; // 默认禁用，有答案时会启用
+      }
     }
   }
 
@@ -662,6 +725,13 @@ export default class QuizPage {
    * 上一题
    */
   previousQuestion() {
+    // 保存当前选择的答案作为临时答案
+    const selectedInputs = document.querySelectorAll('.option-input:checked');
+    if (selectedInputs.length > 0) {
+      const selectedValues = Array.from(selectedInputs).map(input => parseInt(input.value));
+      this.quizEngine.saveTempAnswer(selectedValues);
+    }
+
     if (this.quizEngine.previousQuestion()) {
       this.showCurrentQuestion();
     }
@@ -671,6 +741,13 @@ export default class QuizPage {
    * 下一题
    */
   nextQuestion() {
+    // 保存当前选择的答案作为临时答案
+    const selectedInputs = document.querySelectorAll('.option-input:checked');
+    if (selectedInputs.length > 0) {
+      const selectedValues = Array.from(selectedInputs).map(input => parseInt(input.value));
+      this.quizEngine.saveTempAnswer(selectedValues);
+    }
+
     if (this.quizEngine.nextQuestion()) {
       this.showCurrentQuestion();
     }
@@ -889,6 +966,100 @@ export default class QuizPage {
     document.getElementById('quiz-review-screen').style.display = 'none';
     document.getElementById('quiz-start-screen').style.display = 'block';
     document.getElementById('quiz-stats').style.display = 'none';
+  }
+
+  /**
+   * 显示自动操作提示消息
+   */
+  showAutoActionMessage(message, duration = 1200) {
+    // 移除现有的提示
+    const existingMessage = document.querySelector('.auto-action-message');
+    if (existingMessage) {
+      existingMessage.remove();
+    }
+
+    // 创建提示元素
+    const messageElement = document.createElement('div');
+    messageElement.className = 'auto-action-message';
+    messageElement.innerHTML = `
+      <div class="message-content">
+        <div class="message-spinner"></div>
+        <span class="message-text">${message}</span>
+      </div>
+    `;
+
+    // 添加样式
+    messageElement.style.cssText = `
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(37, 99, 235, 0.95);
+      color: white;
+      padding: 16px 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      font-size: 14px;
+      font-weight: 500;
+      backdrop-filter: blur(4px);
+      animation: fadeInScale 0.3s ease-out;
+    `;
+
+    // 添加内容样式
+    const messageContent = messageElement.querySelector('.message-content');
+    messageContent.style.cssText = `
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    `;
+
+    // 添加旋转动画样式
+    const spinner = messageElement.querySelector('.message-spinner');
+    spinner.style.cssText = `
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top: 2px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    `;
+
+    // 添加动画样式到页面
+    if (!document.querySelector('#auto-action-styles')) {
+      const styles = document.createElement('style');
+      styles.id = 'auto-action-styles';
+      styles.textContent = `
+        @keyframes fadeInScale {
+          from {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.8);
+          }
+          to {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+          }
+        }
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `;
+      document.head.appendChild(styles);
+    }
+
+    // 添加到页面
+    document.body.appendChild(messageElement);
+
+    // 自动移除
+    setTimeout(() => {
+      if (messageElement.parentNode) {
+        messageElement.style.animation = 'fadeInScale 0.3s ease-out reverse';
+        setTimeout(() => {
+          messageElement.remove();
+        }, 300);
+      }
+    }, duration);
   }
 
   /**

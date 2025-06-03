@@ -13,6 +13,7 @@ export class QuizEngine {
     this.questions = [];
     this.currentQuestionIndex = 0;
     this.userAnswers = [];
+    this.tempAnswers = []; // 临时答案存储，用于题目间导航时保存未提交的答案
     this.startTime = null;
     this.endTime = null;
     this.totalScore = 0;
@@ -266,6 +267,7 @@ export class QuizEngine {
   resetQuizState() {
     this.currentQuestionIndex = 0;
     this.userAnswers = [];
+    this.tempAnswers = [];
     this.startTime = Date.now();
     this.endTime = null;
     this.totalScore = 0;
@@ -430,6 +432,28 @@ export class QuizEngine {
       return true;
     }
     return false;
+  }
+
+  /**
+   * 保存当前题目的临时答案
+   */
+  saveTempAnswer(selectedAnswers) {
+    this.tempAnswers[this.currentQuestionIndex] = selectedAnswers;
+    this.logger.info(`保存题目${this.currentQuestionIndex + 1}的临时答案:`, selectedAnswers);
+  }
+
+  /**
+   * 获取当前题目的临时答案
+   */
+  getTempAnswer() {
+    return this.tempAnswers[this.currentQuestionIndex] || [];
+  }
+
+  /**
+   * 检查当前题目是否已提交
+   */
+  isCurrentQuestionSubmitted() {
+    return this.userAnswers[this.currentQuestionIndex] !== undefined;
   }
 
   /**

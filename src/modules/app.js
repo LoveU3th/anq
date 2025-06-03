@@ -7,10 +7,12 @@ import { Router } from './router.js';
 import { PerformanceMonitor } from '../utils/performance.js';
 import { Logger } from '../utils/logger.js';
 import { dataManager } from './data-manager.js';
+import PWAManager from './pwa-manager.js';
 
 class App {
   constructor() {
     this.router = null;
+    this.pwaManager = null;
     this.isInitialized = false;
     this.logger = new Logger('App');
   }
@@ -34,8 +36,8 @@ class App {
       // 初始化路由系统
       await this.initRouter();
 
-      // 注册Service Worker
-      await this.registerServiceWorker();
+      // 初始化PWA管理器
+      await this.initPWAManager();
 
       // 设置全局事件监听器
       this.setupEventListeners();
@@ -165,16 +167,18 @@ class App {
   }
 
   /**
-   * 注册Service Worker
+   * 初始化PWA管理器
    */
-  async registerServiceWorker() {
-    if ('serviceWorker' in navigator) {
-      try {
-        const registration = await navigator.serviceWorker.register('/sw.js');
-        this.logger.info('Service Worker注册成功:', registration);
-      } catch (error) {
-        this.logger.warn('Service Worker注册失败:', error);
-      }
+  async initPWAManager() {
+    try {
+      this.pwaManager = new PWAManager();
+
+      // 将PWA管理器实例暴露到全局，供其他模块使用
+      window.pwaManager = this.pwaManager;
+
+      this.logger.info('PWA管理器初始化完成');
+    } catch (error) {
+      this.logger.warn('PWA管理器初始化失败:', error);
     }
   }
 

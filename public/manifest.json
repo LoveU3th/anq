@@ -1,0 +1,154 @@
+{
+  "name": "安全管理交互学习平台",
+  "short_name": "ANQ安全平台",
+  "description": "现代化的安全管理交互式学习和测试平台，提供视频学习和智能测试功能",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "lang": "zh-CN",
+  "scope": "/",
+  
+  "icons": [
+    {
+      "src": "/assets/images/icons/pwa/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/images/icons/pwa/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/images/icons/pwa/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/images/icons/pwa/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/images/icons/pwa/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/images/icons/pwa/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/images/icons/pwa/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/images/icons/pwa/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  
+  "screenshots": [
+    {
+      "src": "/assets/images/screenshots/desktop-home.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "首页 - 桌面版"
+    },
+    {
+      "src": "/assets/images/screenshots/mobile-quiz.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "platform": "narrow",
+      "label": "答题页面 - 移动版"
+    }
+  ],
+  
+  "categories": [
+    "education",
+    "productivity",
+    "business"
+  ],
+  
+  "shortcuts": [
+    {
+      "name": "开始学习",
+      "short_name": "学习",
+      "description": "开始安全知识学习",
+      "url": "/video/safety",
+      "icons": [
+        {
+          "src": "/assets/images/icons/shortcuts/learn.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "安全测试",
+      "short_name": "测试",
+      "description": "进行安全知识测试",
+      "url": "/quiz/safety",
+      "icons": [
+        {
+          "src": "/assets/images/icons/shortcuts/quiz.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "学习进度",
+      "short_name": "进度",
+      "description": "查看学习进度",
+      "url": "/progress",
+      "icons": [
+        {
+          "src": "/assets/images/icons/shortcuts/progress.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  
+  "related_applications": [],
+  "prefer_related_applications": false,
+  
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  
+  "protocol_handlers": [
+    {
+      "protocol": "web+anq",
+      "url": "/?action=%s"
+    }
+  ],
+  
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
+}
