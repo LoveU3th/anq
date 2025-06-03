@@ -35,20 +35,3 @@ LOG_LEVEL = "debug"
 CACHE_TTL = "300"
 RATE_LIMIT_REQUESTS = "200"
 RATE_LIMIT_WINDOW = "60"
-
-# 开发环境配置
-[env.development]
-kv_namespaces = [
-  { binding = "SAFETY_CONTENT", preview_id = "your_content_kv_dev_id" },
-  { binding = "ANALYTICS_STORE", preview_id = "your_analytics_kv_dev_id" },
-  { binding = "CACHE_STORE", preview_id = "your_cache_kv_dev_id" },
-  { binding = "RATE_LIMIT_STORE", preview_id = "your_rate_limit_kv_dev_id" }
-]
-
-[env.development.vars]
-ENVIRONMENT = "development"
-API_BASE_URL = "http://localhost:8788"
-LOG_LEVEL = "debug"
-CACHE_TTL = "60"
-RATE_LIMIT_REQUESTS = "1000"
-RATE_LIMIT_WINDOW = "60"
