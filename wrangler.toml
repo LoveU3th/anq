@@ -5,10 +5,10 @@ pages_build_output_dir = "dist"
 # 生产环境配置
 [env.production]
 kv_namespaces = [
-  { binding = "SAFETY_CONTENT", id = "your_content_kv_id" },
-  { binding = "ANALYTICS_STORE", id = "your_analytics_kv_id" },
-  { binding = "CACHE_STORE", id = "your_cache_kv_id" },
-  { binding = "RATE_LIMIT_STORE", id = "your_rate_limit_kv_id" }
+  { binding = "SAFETY_CONTENT", id = "baa98240dd524851bce5ab53079c3994" },
+  { binding = "ANALYTICS_STORE", id = "c61c562173de42d4bb5aa614faff2cba" },
+  { binding = "CACHE_STORE", id = "e40819a68b5740bf8741ea93991f6ed9" },
+  { binding = "RATE_LIMIT_STORE", id = "29ad0bd8fe264511969306ef1d3ac0cb" }
 ]
 
 [env.production.vars]
@@ -22,10 +22,10 @@ RATE_LIMIT_WINDOW = "60"
 # 预览环境配置
 [env.preview]
 kv_namespaces = [
-  { binding = "SAFETY_CONTENT", preview_id = "your_content_kv_preview_id" },
-  { binding = "ANALYTICS_STORE", preview_id = "your_analytics_kv_preview_id" },
-  { binding = "CACHE_STORE", preview_id = "your_cache_kv_preview_id" },
-  { binding = "RATE_LIMIT_STORE", preview_id = "your_rate_limit_kv_preview_id" }
+  { binding = "SAFETY_CONTENT", preview_id = "baa98240dd524851bce5ab53079c3994" },
+  { binding = "ANALYTICS_STORE", preview_id = "c61c562173de42d4bb5aa614faff2cba" },
+  { binding = "CACHE_STORE", preview_id = "e40819a68b5740bf8741ea93991f6ed9" },
+  { binding = "RATE_LIMIT_STORE", preview_id = "29ad0bd8fe264511969306ef1d3ac0cb" }
 ]
 
 [env.preview.vars]

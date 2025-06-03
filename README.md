@@ -69,8 +69,10 @@ CLOUDFLARE_API_TOKEN=your_api_token_here
 CLOUDFLARE_ACCOUNT_ID=your_account_id_here
 
 # KV命名空间ID
-CONTENT_STORE_KV_ID=your_content_kv_namespace_id
+SAFETY_CONTENT_KV_ID=your_content_kv_namespace_id
 ANALYTICS_STORE_KV_ID=your_analytics_kv_namespace_id
+CACHE_STORE_KV_ID=your_cache_kv_namespace_id
+RATE_LIMIT_STORE_KV_ID=your_rate_limit_kv_namespace_id
 
 # 其他配置...
 ```
@@ -147,9 +149,10 @@ npm run test:e2e
    - 在 Cloudflare Dashboard 中进入 "Workers & Pages"
    - 点击 "KV" 标签
    - 创建以下命名空间：
-     - `anq-content-store` (存储题库和视频数据)
-     - `anq-analytics-store` (存储用户学习数据)
-     - `anq-user-store` (存储用户信息)
+     - `anq-safety-content` (存储题库、视频和统计数据)
+     - `anq-analytics-store` (存储用户学习分析数据)
+     - `anq-cache-store` (存储缓存数据)
+     - `anq-rate-limit-store` (存储限流数据)
    - 记录每个命名空间的 ID
 
 ### 方式一：通过 Git 集成部署（推荐）
@@ -194,9 +197,10 @@ npm run test:e2e
      CLOUDFLARE_ACCOUNT_ID=your_account_id_here
 
      # KV 命名空间 ID
-     CONTENT_STORE_KV_ID=your_content_kv_namespace_id
+     SAFETY_CONTENT_KV_ID=your_content_kv_namespace_id
      ANALYTICS_STORE_KV_ID=your_analytics_kv_namespace_id
-     USER_STORE_KV_ID=your_user_kv_namespace_id
+     CACHE_STORE_KV_ID=your_cache_kv_namespace_id
+     RATE_LIMIT_STORE_KV_ID=your_rate_limit_kv_namespace_id
 
      # JWT 配置
      JWT_SECRET=your_jwt_secret_key_here
@@ -211,9 +215,10 @@ npm run test:e2e
    - 在 Pages 项目设置中进入 "Functions"
    - 在 "KV namespace bindings" 部分添加：
      ```
-     Variable name: CONTENT_STORE → KV namespace: anq-content-store
+     Variable name: SAFETY_CONTENT → KV namespace: anq-safety-content
      Variable name: ANALYTICS_STORE → KV namespace: anq-analytics-store
-     Variable name: USER_STORE → KV namespace: anq-user-store
+     Variable name: CACHE_STORE → KV namespace: anq-cache-store
+     Variable name: RATE_LIMIT_STORE → KV namespace: anq-rate-limit-store
      ```
 
 5. **触发部署**
@@ -243,7 +248,7 @@ npm run test:e2e
    account_id = "your_account_id_here"
 
    [[env.production.kv_namespaces]]
-   binding = "CONTENT_STORE"
+   binding = "SAFETY_CONTENT"
    id = "your_content_kv_namespace_id"
 
    [[env.production.kv_namespaces]]
@@ -251,8 +256,12 @@ npm run test:e2e
    id = "your_analytics_kv_namespace_id"
 
    [[env.production.kv_namespaces]]
-   binding = "USER_STORE"
-   id = "your_user_kv_namespace_id"
+   binding = "CACHE_STORE"
+   id = "your_cache_kv_namespace_id"
+
+   [[env.production.kv_namespaces]]
+   binding = "RATE_LIMIT_STORE"
+   id = "your_rate_limit_kv_namespace_id"
    EOF
    ```
 
