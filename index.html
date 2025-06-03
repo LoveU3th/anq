@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="现代化安全管理交互学习平台">
+    <title>安全学习平台</title>
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="./src/styles/main.css" as="style">
+    <link rel="preload" href="./src/modules/router.js" as="script">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="./src/styles/main.css">
+
+    <!-- PWA Meta -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#2563eb">
+
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="./src/assets/images/icons/logo.svg">
+    <link rel="apple-touch-icon" href="./src/assets/images/icons/pwa/icon-192x192.png">
+</head>
+
+<body>
+    <!-- App Container -->
+    <div id="app">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <span class="logo-text">🛡️ 安全学习平台</span>
+                    </div>
+                    <nav class="main-nav">
+                        <a href="/" class="nav-link active">首页</a>
+                        <a href="/video/safety" class="nav-link">安全操作</a>
+                        <a href="/video/violation" class="nav-link">违规案例</a>
+                        <a href="/quiz/safety" class="nav-link">安全测试</a>
+                        <a href="/quiz/violation" class="nav-link">违规识别</a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <div class="container">
+                <!-- Hero Section -->
+                <section class="hero">
+                    <div class="hero-content">
+                        <h1 class="hero-title">安全管理交互学习平台</h1>
+                        <p class="hero-description">
+                            通过视频学习和智能测试，提升您的安全意识和操作规范
+                        </p>
+                        <div class="hero-actions">
+                            <a href="/video/safety" class="btn btn-primary">开始学习</a>
+                            <a href="/quiz/safety" class="btn btn-secondary">立即测试</a>
+                        </div>
+                    </div>
+                    <div class="hero-image">
+                        <div
+                            style="width: 500px; height: 400px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">
+                            🛡️
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Features Section -->
+                <section class="features">
+                    <h2 class="section-title">学习模块</h2>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">🎥</div>
+                            <h3 class="feature-title">视频学习</h3>
+                            <p class="feature-description">观看安全操作和违规案例视频，直观了解安全规范</p>
+                            <a href="/video/safety" class="feature-link">开始观看</a>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">📝</div>
+                            <h3 class="feature-title">智能测试</h3>
+                            <p class="feature-description">通过随机题目测试，检验您的安全知识掌握程度</p>
+                            <a href="/quiz/safety" class="feature-link">开始测试</a>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">📊</div>
+                            <h3 class="feature-title">学习分析</h3>
+                            <p class="feature-description">查看学习进度和成绩分析，持续提升安全意识</p>
+                            <a href="#" class="feature-link">查看进度</a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="container">
+                <div class="footer-content">
+                    <p>&copy; 2024 安全学习平台. 保留所有权利.</p>
+                    <div class="footer-links">
+                        <a href="#" class="footer-link">使用条款</a>
+                        <a href="#" class="footer-link">隐私政策</a>
+                        <a href="#" class="footer-link">联系我们</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loading" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">加载中...</p>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="./src/modules/app.js"></script>
+</body>
+
+</html>
