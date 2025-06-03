@@ -11,6 +11,7 @@
 
 /* Page Styles */
 @import './pages/home.css';
+@import './pages/video.css';
 
 /* Global Styles */
 * {
@@ -59,7 +60,7 @@ body {
   .container {
     padding: 0 var(--spacing-sm);
   }
-  
+
   .app-main {
     padding: var(--spacing-md) 0;
   }
@@ -106,13 +107,14 @@ body {
 
 /* Print Styles */
 @media print {
+
   .app-header,
   .app-footer,
   .hero-actions,
   .feature-link {
     display: none;
   }
-  
+
   body {
     font-size: 12pt;
     line-height: 1.4;
