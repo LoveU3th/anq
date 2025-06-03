@@ -5,7 +5,7 @@ pages_build_output_dir = "dist"
 # 生产环境配置
 [env.production]
 kv_namespaces = [
-  { binding = "CONTENT_STORE", id = "your_content_kv_id" },
+  { binding = "SAFETY_CONTENT", id = "your_content_kv_id" },
   { binding = "ANALYTICS_STORE", id = "your_analytics_kv_id" },
   { binding = "CACHE_STORE", id = "your_cache_kv_id" },
   { binding = "RATE_LIMIT_STORE", id = "your_rate_limit_kv_id" }
@@ -22,7 +22,7 @@ RATE_LIMIT_WINDOW = "60"
 # 预览环境配置
 [env.preview]
 kv_namespaces = [
-  { binding = "CONTENT_STORE", preview_id = "your_content_kv_preview_id" },
+  { binding = "SAFETY_CONTENT", preview_id = "your_content_kv_preview_id" },
   { binding = "ANALYTICS_STORE", preview_id = "your_analytics_kv_preview_id" },
   { binding = "CACHE_STORE", preview_id = "your_cache_kv_preview_id" },
   { binding = "RATE_LIMIT_STORE", preview_id = "your_rate_limit_kv_preview_id" }
@@ -39,7 +39,7 @@ RATE_LIMIT_WINDOW = "60"
 # 开发环境配置
 [env.development]
 kv_namespaces = [
-  { binding = "CONTENT_STORE", preview_id = "your_content_kv_dev_id" },
+  { binding = "SAFETY_CONTENT", preview_id = "your_content_kv_dev_id" },
   { binding = "ANALYTICS_STORE", preview_id = "your_analytics_kv_dev_id" },
   { binding = "CACHE_STORE", preview_id = "your_cache_kv_dev_id" },
   { binding = "RATE_LIMIT_STORE", preview_id = "your_rate_limit_kv_dev_id" }
