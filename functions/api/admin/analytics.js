@@ -10,7 +10,7 @@ import { verifyAdminAuth } from './auth.js';
  */
 export async function onRequestGet(context) {
   const { request, env } = context;
-  
+
   try {
     // 验证管理员权限
     const authResult = await verifyAdminAuth(request, env);
@@ -23,14 +23,14 @@ export async function onRequestGet(context) {
         headers: { 'Content-Type': 'application/json' }
       });
     }
-    
+
     const url = new URL(request.url);
     const range = url.searchParams.get('range') || '30'; // 默认30天
     const type = url.searchParams.get('type') || 'overview'; // overview, users, content
-    
+
     // 获取基础统计数据
     const stats = await getAnalyticsData(env, range, type);
-    
+
     return new Response(JSON.stringify({
       success: true,
       data: stats
@@ -38,7 +38,7 @@ export async function onRequestGet(context) {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
     });
-    
+
   } catch (error) {
     console.error('Get analytics error:', error);
     return new Response(JSON.stringify({
@@ -58,12 +58,12 @@ async function getAnalyticsData(env, range, type) {
   const now = new Date();
   const rangeMs = parseInt(range) * 24 * 60 * 60 * 1000;
   const startDate = new Date(now.getTime() - rangeMs);
-  
+
   // 获取存储的统计数据
   const publicStats = await env.SAFETY_CONTENT.get('public_stats', { type: 'json' }) || {};
   const videoStats = await env.SAFETY_CONTENT.get('video_stats', { type: 'json' }) || {};
   const quizStats = await env.SAFETY_CONTENT.get('quiz_stats', { type: 'json' }) || {};
-  
+
   switch (type) {
     case 'overview':
       return getOverviewData(publicStats, videoStats, quizStats);
@@ -88,7 +88,7 @@ function getOverviewData(publicStats, videoStats, quizStats) {
     avgStudyTime: calculateAvgStudyTime(videoStats, quizStats),
     passRate: calculatePassRate(quizStats),
     activeUsers: Math.floor((publicStats.totalVisits || 0) * 0.3), // 估算活跃用户
-    
+
     // 趋势数据（模拟）
     trends: {
       completionRate: 5.2,
@@ -96,7 +96,30 @@ function getOverviewData(publicStats, videoStats, quizStats) {
       passRate: 8.3,
       activeUsers: 12.5
     },
-    
+
+    // 用户活动数据（模拟）
+    userActivity: generateUserActivityData(),
+
+    // 设备统计数据
+    deviceStats: {
+      mobile: 65,
+      desktop: 30,
+      tablet: 5
+    },
+
+    // 学习路径数据
+    learningPaths: {
+      videoFirst: 70,
+      quizFirst: 30
+    },
+
+    // 用户留存率
+    retentionRate: {
+      day1: 85,
+      day7: 60,
+      day30: 35
+    },
+
     // 图表数据（模拟）
     chartData: {
       progressTrend: generateProgressTrendData(),
@@ -138,18 +161,18 @@ async function getUserAnalytics(env, startDate, endDate) {
         deviceType: '移动端'
       }
     ],
-    
+
     deviceStats: {
       mobile: 65,
       desktop: 30,
       tablet: 5
     },
-    
+
     learningPaths: {
       videoFirst: 70,
       quizFirst: 30
     },
-    
+
     retentionRate: {
       day1: 85,
       day7: 60,
@@ -177,9 +200,9 @@ async function getContentAnalytics(env, startDate, endDate) {
         dropOffPoints: [45, 120, 170]
       }
     },
-    
+
     questionPerformance: await getQuestionPerformance(env),
-    
+
     contentEngagement: {
       mostViewedVideo: 'safety',
       hardestQuestions: ['q_safety_005', 'q_violation_012'],
@@ -200,10 +223,10 @@ async function getContentAnalytics(env, startDate, endDate) {
 async function getQuestionPerformance(env) {
   const safetyQuestions = await env.SAFETY_CONTENT.get('questions_safety', { type: 'json' }) || [];
   const violationQuestions = await env.SAFETY_CONTENT.get('questions_violation', { type: 'json' }) || [];
-  
+
   // 模拟题目统计数据
   const questionStats = {};
-  
+
   [...safetyQuestions, ...violationQuestions].forEach(question => {
     questionStats[question.id] = {
       id: question.id,
@@ -214,7 +237,7 @@ async function getQuestionPerformance(env) {
       avgTime: Math.floor(Math.random() * 30) + 15 // 15-45秒
     };
   });
-  
+
   return Object.values(questionStats);
 }
 
@@ -224,7 +247,7 @@ async function getQuestionPerformance(env) {
 function calculateCompletionRate(publicStats, quizStats) {
   const totalStarts = publicStats.totalVisits || 0;
   const totalCompletions = publicStats.totalQuizzes || 0;
-  
+
   if (totalStarts === 0) return 0;
   return Math.round((totalCompletions / totalStarts) * 100);
 }
@@ -236,7 +259,7 @@ function calculateAvgStudyTime(videoStats, quizStats) {
   // 模拟计算，实际项目中会基于真实数据
   const avgVideoTime = 8.5; // 分钟
   const avgQuizTime = 7.0; // 分钟
-  
+
   return Math.round(avgVideoTime + avgQuizTime);
 }
 
@@ -254,7 +277,7 @@ function calculatePassRate(quizStats) {
 function generateProgressTrendData() {
   const data = [];
   const now = new Date();
-  
+
   for (let i = 29; i >= 0; i--) {
     const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
     data.push({
@@ -263,7 +286,7 @@ function generateProgressTrendData() {
       newUsers: Math.floor(Math.random() * 30) + 10
     });
   }
-  
+
   return data;
 }
 
@@ -285,7 +308,7 @@ function generateAccuracyDistributionData(quizStats) {
  */
 export async function onRequestPost(context) {
   const { request, env } = context;
-  
+
   try {
     // 验证管理员权限
     const authResult = await verifyAdminAuth(request, env);
@@ -298,12 +321,12 @@ export async function onRequestPost(context) {
         headers: { 'Content-Type': 'application/json' }
       });
     }
-    
+
     const { format, range, type } = await request.json();
-    
+
     // 获取数据
     const data = await getAnalyticsData(env, range || '30', type || 'overview');
-    
+
     // 根据格式返回数据
     if (format === 'csv') {
       const csv = convertToCSV(data);
@@ -324,7 +347,7 @@ export async function onRequestPost(context) {
         }
       });
     }
-    
+
   } catch (error) {
     console.error('Export analytics error:', error);
     return new Response(JSON.stringify({
@@ -338,14 +361,50 @@ export async function onRequestPost(context) {
 }
 
 /**
+ * 生成用户活动数据
+ */
+function generateUserActivityData() {
+  const activities = [];
+  const modules = ['安全操作', '违规识别'];
+  const deviceTypes = ['移动端', '桌面端'];
+
+  for (let i = 1; i <= 20; i++) {
+    const userId = `user_${String(i).padStart(3, '0')}`;
+    const module = modules[Math.floor(Math.random() * modules.length)];
+    const deviceType = deviceTypes[Math.floor(Math.random() * deviceTypes.length)];
+    const score = Math.floor(Math.random() * 40) + 60; // 60-100分
+    const timeSpent = Math.floor(Math.random() * 15) + 5; // 5-20分钟
+
+    // 生成最近30天内的随机时间
+    const now = new Date();
+    const randomDays = Math.floor(Math.random() * 30);
+    const randomHours = Math.floor(Math.random() * 24);
+    const randomMinutes = Math.floor(Math.random() * 60);
+    const completedAt = new Date(now.getTime() - randomDays * 24 * 60 * 60 * 1000 - randomHours * 60 * 60 * 1000 - randomMinutes * 60 * 1000);
+
+    activities.push({
+      userId,
+      module,
+      completedAt: completedAt.toISOString().replace('T', ' ').substring(0, 19),
+      score,
+      timeSpent,
+      deviceType
+    });
+  }
+
+  // 按完成时间排序（最新的在前）
+  return activities.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
+}
+
+/**
  * 转换为CSV格式
  */
 function convertToCSV(data) {
   // 简单的CSV转换，实际项目中可能需要更复杂的处理
   const headers = Object.keys(data);
-  const values = Object.values(data).map(v => 
+  const values = Object.values(data).map(v =>
     typeof v === 'object' ? JSON.stringify(v) : v
   );
-  
+
   return [headers.join(','), values.join(',')].join('\n');
 }

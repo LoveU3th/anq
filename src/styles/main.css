@@ -8,6 +8,7 @@
 @import './components/cards.css';
 @import './components/navigation.css';
 @import './components/loading.css';
+@import './components/charts.css';
 
 /* Page Styles */
 @import './pages/home.css';
