@@ -6,6 +6,7 @@
 import { Router } from './router.js';
 import { PerformanceMonitor } from '../utils/performance.js';
 import { Logger } from '../utils/logger.js';
+import { dataManager } from './data-manager.js';
 
 class App {
   constructor() {
@@ -20,34 +21,55 @@ class App {
   async init() {
     try {
       this.logger.info('正在初始化应用...');
-      
+
       // 显示加载指示器
       this.showLoading();
-      
+
+      // 初始化数据管理器
+      await this.initDataManager();
+
       // 初始化性能监控
       await this.initPerformanceMonitoring();
-      
+
       // 初始化路由系统
       await this.initRouter();
-      
+
       // 注册Service Worker
       await this.registerServiceWorker();
-      
+
       // 设置全局事件监听器
       this.setupEventListeners();
-      
+
       // 隐藏加载指示器
       this.hideLoading();
-      
+
       this.isInitialized = true;
       this.logger.info('应用初始化完成');
-      
+
       // 触发应用就绪事件
       this.dispatchEvent('app:ready');
-      
+
     } catch (error) {
       this.logger.error('应用初始化失败:', error);
       this.showError('应用初始化失败，请刷新页面重试');
+    }
+  }
+
+  /**
+   * 初始化数据管理器
+   */
+  async initDataManager() {
+    try {
+      await dataManager.initAppData();
+      this.logger.info('数据管理器初始化完成');
+
+      // 记录页面访问
+      await dataManager.logUserAction('page_visit', {
+        page: window.location.pathname,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      this.logger.warn('数据管理器初始化失败:', error);
     }
   }
 
@@ -112,7 +134,7 @@ class App {
 
     // 添加路由守卫
     this.router.addGuard(this.authGuard.bind(this));
-    
+
     this.logger.info('路由系统初始化完成');
   }
 
@@ -163,11 +185,11 @@ class App {
     // 处理未捕获的错误
     window.addEventListener('error', this.handleError.bind(this));
     window.addEventListener('unhandledrejection', this.handleUnhandledRejection.bind(this));
-    
+
     // 处理网络状态变化
     window.addEventListener('online', this.handleOnline.bind(this));
     window.addEventListener('offline', this.handleOffline.bind(this));
-    
+
     // 处理页面可见性变化
     document.addEventListener('visibilitychange', this.handleVisibilityChange.bind(this));
   }

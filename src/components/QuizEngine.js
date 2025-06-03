@@ -4,6 +4,7 @@
  */
 
 import { Logger } from '../utils/logger.js';
+import { dataManager } from '../modules/data-manager.js';
 
 export class QuizEngine {
   constructor(quizType = 'safety') {
@@ -43,31 +44,26 @@ export class QuizEngine {
    */
   async loadQuestions() {
     try {
-      // 尝试从API加载题目
-      const response = await fetch(`/api/questions?type=${this.quizType}&count=10&random=true`);
+      // 使用数据管理器获取题目
+      this.questions = await dataManager.getRandomQuestions(this.quizType, {
+        count: 10,
+        random: true,
+        useCache: true
+      });
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success && data.questions) {
-          this.questions = data.questions;
-          this.logger.info(`从API加载了${this.questions.length}道题目`);
-          return;
-        }
-      }
-
-      this.logger.warn('API加载失败，使用模拟数据');
+      this.logger.info(`从数据管理器加载了${this.questions.length}道题目`);
     } catch (error) {
-      this.logger.warn('API请求失败，使用模拟数据:', error.message);
+      this.logger.warn('数据管理器加载失败，使用模拟数据:', error.message);
+
+      // 如果数据管理器失败，使用模拟数据作为后备
+      this.questions = this.getMockQuestions(this.quizType);
+
+      // 随机打乱题目顺序
+      this.shuffleQuestions();
+
+      // 只取前10道题
+      this.questions = this.questions.slice(0, 10);
     }
-
-    // 如果API失败，使用模拟数据作为后备
-    this.questions = this.getMockQuestions(this.quizType);
-
-    // 随机打乱题目顺序
-    this.shuffleQuestions();
-
-    // 只取前10道题
-    this.questions = this.questions.slice(0, 10);
   }
 
   /**
@@ -363,28 +359,11 @@ export class QuizEngine {
    */
   async validateAnswerViaAPI(questionId, selectedAnswers) {
     try {
-      const response = await fetch('/api/validate-answer', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          questionId: questionId,
-          selectedAnswers: selectedAnswers,
-          quizType: this.quizType
-        })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success) {
-          return data.isCorrect;
-        }
-      }
-
-      throw new Error('API验证失败');
+      // 使用数据管理器验证答案
+      const result = await dataManager.validateAnswer(questionId, selectedAnswers, this.quizType);
+      return result.isCorrect;
     } catch (error) {
-      this.logger.warn('API验证失败，使用本地验证:', error.message);
+      this.logger.warn('数据管理器验证失败，使用本地验证:', error.message);
       throw error;
     }
   }
